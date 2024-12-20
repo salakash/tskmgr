@@ -1,4 +1,3 @@
-// src/components/TaskForm/TaskForm.js
 import React, { useState } from "react";
 import "./TaskForm.css";
 
@@ -9,17 +8,13 @@ function TaskForm({ addTask }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Validate input fields
     if (!title.trim()) {
       setError("Task title is required.");
       return;
     }
 
-    // Add task via parent-provided function
-    addTask({ title, description });
-
-    // Clear form and error
+    const newTask = { title, description };
+    addTask(newTask);
     setTitle("");
     setDescription("");
     setError("");
@@ -37,7 +32,6 @@ function TaskForm({ addTask }) {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter task title"
           />
         </div>
         <div className="form-group">
@@ -46,7 +40,6 @@ function TaskForm({ addTask }) {
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter task description (optional)"
           ></textarea>
         </div>
         <button type="submit" className="btn-submit">Add Task</button>

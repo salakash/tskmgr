@@ -1,47 +1,53 @@
-// src/App.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header/Header";
 import TaskForm from "./components/TaskForm/TaskForm";
 import TaskList from "./components/TaskList/TaskList";
+import { fetchTasks, createTask, updateTask, deleteTask } from "./services/api";
 
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  // Function to add a new task
-  const addTask = (task) => {
-    const newTask = {
-      id: Date.now(), // Unique ID for each task
-      ...task,
-    };
-    setTasks([...tasks, newTask]);
+  // Fetch tasks from the backend
+  useEffect(() => {
+    fetchTasks()
+      .then((response) => setTasks(response.data))
+      .catch((error) => console.error("Error fetching tasks:", error));
+  }, []);
+
+  // Create a new task
+  const handleAddTask = (task) => {
+    createTask(task)
+      .then((response) => setTasks([...tasks, response.data]))
+      .catch((error) => console.error("Error creating task:", error));
   };
 
-  // Function to delete a task by ID
-  const deleteTask = (id) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
+  // Update an existing task
+  const handleUpdateTask = (id, updatedTask) => {
+    updateTask(id, updatedTask)
+      .then(() => {
+        setTasks(
+          tasks.map((task) => (task.id === id ? { ...task, ...updatedTask } : task))
+        );
+      })
+      .catch((error) => console.error("Error updating task:", error));
   };
 
-  // Function to update a task by ID
-  const updateTask = (id, updatedTitle, updatedDescription) => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === id
-        ? { ...task, title: updatedTitle, description: updatedDescription }
-        : task
-    );
-    setTasks(updatedTasks);
+  // Delete a task
+  const handleDeleteTask = (id) => {
+    deleteTask(id)
+      .then(() => setTasks(tasks.filter((task) => task.id !== id)))
+      .catch((error) => console.error("Error deleting task:", error));
   };
 
   return (
     <div className="App">
-      {/* Header Component */}
       <Header />
-
-      {/* Task Form Component */}
-      <TaskForm addTask={addTask} />
-
-      {/* Task List Component */}
-      <TaskList tasks={tasks} deleteTask={deleteTask} updateTask={updateTask} />
+      <TaskForm addTask={handleAddTask} />
+      <TaskList
+        tasks={tasks}
+        updateTask={handleUpdateTask}
+        deleteTask={handleDeleteTask}
+      />
     </div>
   );
 }
