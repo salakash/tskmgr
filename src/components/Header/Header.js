@@ -7,7 +7,7 @@ function Header() {
     <header className="header">
       <div className="header-content">
         <h1 className="header-title">Task Manager</h1>
-        <p className="header-subtitle">Organise your tasks efficiently and effortlessly</p>
+        <p className="header-subtitle">Organize your tasks efficiently and effortlessly</p>
       </div>
     </header>
   );
